@@ -175,54 +175,58 @@ class stepper:
 		plt.rcParams['axes.grid'] = True
 		plt.rcParams['axes.grid.which'] = 'both'
 
-		fig, axs = plt.subplots(2, 3, sharex=True)
+		fig, axs = plt.subplots(1, 2, sharex=True)
 
-		axs[0, 0].set_title('Speed profile vs time')
-		axs[0, 0].plot(self.discrete_time, self.discrete_angular_speed, color='b')
-		axs[0, 0].set(xlabel='time, s', ylabel='omega, rad/s')
-		axs[0, 0].grid(which='major', lw=1.5)
+		axs[0].set_title('Angle and angular speed vs time')
+		axs[0].plot(self.discrete_time, self.discrete_angular_speed, color='b')
+		axs[0].set(xlabel='time, s', ylabel='omega, rad/s')
+		axs[0].grid(which='major', lw=1.5)
+		axs[0].tick_params(axis='y', labelcolor='b')
 
-		axs[1, 0].set_title('Angle position vs time')
-		axs[1, 0].plot(self.discrete_time, np.asarray(self.discrete_angular_pos)*180.0/3.1415926, color='r')
-		axs[1, 0].set(xlabel='time, s', ylabel='alpha, o')
-		axs[1, 0].grid(which='major', lw=1.5)
+		axs_2 = axs[0].twinx()
+		axs_2.plot(self.discrete_time, np.asarray(self.discrete_angular_pos)*180.0/3.1415926, color='r')
+		axs_2.set(xlabel='time, s', ylabel='alpha, o')
+		axs_2.grid(which='major', lw=1.5)
+		axs_2.tick_params(axis='y', labelcolor='r')
 
-		axs[0, 1].set_title('Speed profile vs time')
-		axs[0, 1].plot(self.discrete_time, self.discrete_linear_speed, color='g')
-		axs[0, 1].set(xlabel='time, s', ylabel='V, m/s')
-		axs[0, 1].grid(which='major', lw=1.5)
+		axs[1].set_title('Position and speed vs time')
+		axs[1].plot(self.discrete_time, self.discrete_linear_speed, color='b')
+		axs[1].set(xlabel='time, s', ylabel='V, m/s')
+		axs[1].grid(which='major', lw=1.5)
+		axs[1].tick_params(axis='y', labelcolor='b')
 
-		axs[1, 1].set_title('Linear position vs time')
-		axs[1, 1].plot(self.discrete_time, self.discrete_linear_pos, color='black')
-		axs[1, 1].axhline(y = distance_limit_1, color = 'r', linestyle = '--')
-		axs[1, 1].axhline(y = distance_limit_2, color = 'r', linestyle = '--')
-		axs[1, 1].set(xlabel='time, s', ylabel='S, cm')
-		axs[1, 1].grid(which='major', lw=1.5)
+		axs_3 = axs[1].twinx()
+		axs_3.plot(self.discrete_time, self.discrete_linear_pos, color='r')
+		axs_3.axhline(y = distance_limit_1, color = 'g', linestyle = '--')
+		axs_3.axhline(y = distance_limit_2, color = 'g', linestyle = '--')
+		axs_3.set(xlabel='time, s', ylabel='S, cm')
+		axs_3.grid(which='major', lw=1.5)
+		axs_3.tick_params(axis='y', labelcolor='r')
 
-		axs[0, 2].set_title('Timer counter vs time')
-		axs[0, 2].step(self.discrete_time, self.discrete_counter)
-		axs[0, 2].set(xlabel='time, s', ylabel='counts')
-		axs[0, 2].grid(which='major', lw=1.5)
-
-		# axs[1, 2].set_title('Timer counter vs time (CLOSE VIEW)')
-		# axs[1, 2].step(stepper_test.discrete_time, stepper_test.discrete_counter)
-		# axs[1, 2].axhline(y = 8, color = 'r', linestyle = '--')
-		# axs[1, 2].set(xlabel='time, s', ylabel='counts')
-		# axs[1, 2].grid(which='major', lw=1.5)
+		# axs[].set_title('Timer counter vs time')
+		# axs[].step(self.discrete_time, self.discrete_counter)
+		# axs[].set(xlabel='time, s', ylabel='counts')
+		# axs[].grid(which='major', lw=1.5)
 
 		fig.tight_layout()
 		plt.show()
 
 	
 if __name__ == "__main__":
-	import parameters
 	import matplotlib.pyplot as plt
 
-	stepper_test = stepper("test")
-	stepper_test.configurate(parameters.F_TIM, parameters.SPR, 
-								parameters.PULLEY_DIAMETER, parameters.LINEAR_SPEED)
+	F_TIM = 72000  				# Hz
+	SPR = 200					# Steps
+	PULLEY_DIAMETER = 22.92e-3 	# in m
+	TARGET_DISTANCE = 200  		# in cm
 
-	stepper_test.generate_speed_profile(parameters.ANGULAR_ACCEL, parameters.ANGULAR_DECEL, 
-											parameters.LINEAR_SPEED, 0, parameters.TARGET_DISTANCE)
+	ANGULAR_ACCEL = 40.0   		# in rad/s^2
+	ANGULAR_DECEL = 40.0   		# in rad/s^2
+	LINEAR_SPEED = 0.7 			# in m/s
+
+	stepper_test = stepper("test")
+	stepper_test.configurate(F_TIM, SPR, PULLEY_DIAMETER, LINEAR_SPEED)
+
+	stepper_test.generate_speed_profile(ANGULAR_ACCEL, ANGULAR_DECEL, LINEAR_SPEED, 0, TARGET_DISTANCE)
 	stepper_test.calculate()
 	stepper_test.plot()
