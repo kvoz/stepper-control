@@ -1,4 +1,13 @@
 # -*- coding: utf-8 -*- 
+
+"""
+Model is based on article "Generate stepper motor linear speed profile in real time" by Stoychitch 
+(DOI:10.1088/1757-899X/294/1/012055) in terms of calculating counter via contants Ra and Rb.
+
+Speed profile calculating for accel and decel ramps produced on methods of application note AVR446: Linear speed control of stepper motor 
+(Atmel).
+"""
+
 import numpy as np
 
 class stepper:
